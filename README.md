@@ -2,4 +2,4 @@
 
 The collection of Algorithms-Data-Structures solotions
 
-![alt text](https://uploads.sitepoint.com/wp-content/uploads/2015/05/1431391699Fotolia_64334859_Subscription_Monthly_M.jpg)
+![alt text](https://journals.sagepub.com/cms/10.1177/1473871612455749/asset/images/large/10.1177_1473871612455749-fig6.jpeg)
