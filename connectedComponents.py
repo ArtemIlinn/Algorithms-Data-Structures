@@ -20,45 +20,69 @@ Output
 1 1 2 2
 """
 
+def get_source(vertex, source):
+    while vertex != source[vertex][0]:
+        vertex = source[vertex][0]
+    return vertex, source[vertex][1]
 
-class Graph:
-    def __init__(self, vertex_number, edge_number=0):
-        self.vertex_number = vertex_number
-        self.edge_number = edge_number
-        self.adj = [[] for i in range(vertex_number)]
 
-    def dfs(self, vertex, visited, parent_vertex):
-        visited[vertex] = True      # just bounced here
-        for i in self.adj[vertex]:  # go for all connected Vs
-            if not visited[i]:      # if not visited do the same
-                self.dfs(i, visited, vertex)
+def get_sources(graph):
 
-    def draw_edge(self, i, j):
-        self.edge_number += 1
-        self.adj[i].append(j)
-        self.adj[j].append(i)
+    giga_source = {}
 
-    def is_path(self):
-        visited = [False] * self.vertex_number  # been nowhere so far
-        self.dfs(0, visited, -1)  # mark all accessible vertices
+    for vertex in graph.keys():
+        giga_source[vertex] = (vertex, 0)
 
-        for vertex in range(self.vertex_number):
-            if not visited[vertex]:
-                return False
-        return True
+    for i in graph:
+        for j in graph[i]:
+            (source_i, deep_i), (source_j, deep_j) = get_source(i, giga_source), get_source(j, giga_source)
 
-    def is_tree(self):
-        return self.is_path() and self.edge_number == self.vertex_number - 1
+            if source_i != source_j:
+                current_min, current_max = source_i, source_j
+
+                if deep_i > deep_j:
+                    current_min, current_max = source_j, source_i
+
+                giga_source[current_max] = (current_max, max(giga_source[current_min][1]+1, giga_source[current_max][1]))
+                giga_source[current_min] = (giga_source[current_max][0], -1)
+
+    ans = {}
+    for i in graph:
+        if giga_source[i][0] == i:
+            ans[i] = []
+    for i in graph:
+        ans[get_source(i, giga_source)[0]].append(i)
+    return ans
+
+
+def draw_edge(graph, i, j):
+    graph[i].append(j)
+    graph[j].append(i)
+
+
+def components(graph):
+    components = list(get_sources(graph).values())
+    components_number = len(components)
+    print(components_number )
+
+    list_to_print = [0]*vertex_number
+
+    for c in range(components_number):
+        for i in components[c]:
+            list_to_print[i-1] = c+1
+
+    print(*list_to_print)
 
 
 params = list(map(int, input().split()))
-model = Graph(params[0])
+vertex_number = params[0]
+
+graph = {}
+for i in range(vertex_number):
+    graph[i + 1] = []
 
 for i in range(int(params[1])):
-    params = list(map(int, input().split()))
-    model.draw_edge(params[0] - 1, params[1] - 1)
+    ps = list(map(int, input().split()))
+    draw_edge(graph, ps[0], ps[1])
 
-if model.is_tree():
-    print('YES')
-else:
-    print('NO')
+components(graph)
